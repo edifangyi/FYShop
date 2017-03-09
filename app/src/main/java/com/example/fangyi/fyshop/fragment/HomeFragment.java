@@ -95,7 +95,6 @@ public class HomeFragment extends Fragment implements OnBannerListener {
     }
 
 
-
     private void requestImages2() {
         String url = Contants.API.BANNER_HOME;
 
@@ -198,7 +197,6 @@ public class HomeFragment extends Fragment implements OnBannerListener {
             }
 
 
-
             @Override
             public void onError(Response response, int code, Exception e) {
 
@@ -210,24 +208,24 @@ public class HomeFragment extends Fragment implements OnBannerListener {
     private void inidData(List<Campaign> campaigns) {
 //        mAdatper = new HomeCatgoryAdapter(FYApp.datas);//本地
 
-        mAdatper = new HomeCatgoryAdapter(campaigns,this.getContext());
+        mAdatper = new HomeCatgoryAdapter(campaigns, this.getContext());
 
-       mAdatper.setOnCampaignClickListener(new HomeCatgoryAdapter.OnCampaignClickListener() {
-           @Override
-           public void onClick(View view, Campaign.CpOneBean campaign) {
-               Toast.makeText(getContext(), "campaign:" + campaign.getTitle(), Toast.LENGTH_SHORT).show();
-           }
+        mAdatper.setOnCampaignClickListener(new HomeCatgoryAdapter.OnCampaignClickListener() {
+            @Override
+            public void onClick(View view, Campaign.CpOneBean campaign) {
+                Toast.makeText(getContext(), "campaign:" + campaign.getTitle(), Toast.LENGTH_SHORT).show();
+            }
 
-           @Override
-           public void onClick(View view, Campaign.CpTwoBean campaign) {
-               Toast.makeText(getContext(), "campaign:" + campaign.getTitle(), Toast.LENGTH_SHORT).show();
-           }
+            @Override
+            public void onClick(View view, Campaign.CpTwoBean campaign) {
+                Toast.makeText(getContext(), "campaign:" + campaign.getTitle(), Toast.LENGTH_SHORT).show();
+            }
 
-           @Override
-           public void onClick(View view, Campaign.CpThreeBean campaign) {
-               Toast.makeText(getContext(), "campaign:" + campaign.getTitle(), Toast.LENGTH_SHORT).show();
-           }
-       });
+            @Override
+            public void onClick(View view, Campaign.CpThreeBean campaign) {
+                Toast.makeText(getContext(), "campaign:" + campaign.getTitle(), Toast.LENGTH_SHORT).show();
+            }
+        });
 
         mRecyclerView.setAdapter(mAdatper);
 

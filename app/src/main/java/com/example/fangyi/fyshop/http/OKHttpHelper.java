@@ -79,6 +79,8 @@ public class OKHttpHelper {
                     String resultStr = response.body().string();
 
 
+
+
                     if (callback.mType == String.class) {
 
                         callbackSuccess(callback, response, resultStr);

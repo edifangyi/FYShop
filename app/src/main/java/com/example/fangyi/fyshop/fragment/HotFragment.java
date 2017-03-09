@@ -13,7 +13,8 @@ import android.widget.Toast;
 import com.cjj.MaterialRefreshLayout;
 import com.cjj.MaterialRefreshListener;
 import com.example.fangyi.fyshop.R;
-import com.example.fangyi.fyshop.adapter.HotWaresAdapter;
+import com.example.fangyi.fyshop.adapter.HotWares2Adapter;
+import com.example.fangyi.fyshop.adapter.base.BaseAdapter;
 import com.example.fangyi.fyshop.bean.hot.Page;
 import com.example.fangyi.fyshop.bean.hot.Wares;
 import com.example.fangyi.fyshop.http.Contants;
@@ -34,7 +35,7 @@ public class HotFragment extends Fragment {
     private List<Wares> datas;
 
 
-    private HotWaresAdapter mAdatper;
+    private HotWares2Adapter mAdatper;
     private RecyclerView mRecyclerView;
     private MaterialRefreshLayout mRefreshLaout;
 
@@ -130,7 +131,21 @@ public class HotFragment extends Fragment {
         switch (state) {
 
             case STATE_NORMAL:
-                mAdatper = new HotWaresAdapter(datas);
+//                mAdatper = new HotWaresAdapter(datas);
+//                mRecyclerView.setAdapter(mAdatper);
+
+                mAdatper = new HotWares2Adapter(getContext(), datas);
+
+                mAdatper.setOnItemClickListener(new BaseAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        Toast.makeText(getContext(), "position:" + position, Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+
+
+
                 mRecyclerView.setAdapter(mAdatper);
                 break;
 
