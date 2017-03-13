@@ -7,7 +7,6 @@ import java.util.List;
  */
 
 public class WaresList {
-
     /**
      * copyright : 本API接口只允许菜鸟窝(http://www.cniao5.com)用户使用,其他机构或者个人使用均为侵权行为
      * totalCount : 23

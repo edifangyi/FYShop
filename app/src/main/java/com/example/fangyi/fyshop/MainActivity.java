@@ -1,7 +1,7 @@
 package com.example.fangyi.fyshop;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -21,13 +21,14 @@ import com.example.fangyi.fyshop.widget.FragmentTabHost;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     private LayoutInflater mInflater;
     private FragmentTabHost mTabhost;
     private List<Tab> mTabs = new ArrayList<>();
 
     private FYToolbar mToolbar;
+    private CartFragment cartFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,18 +50,18 @@ public class MainActivity extends AppCompatActivity {
 //        mTabhost.addTab(tabSpec, HomeFragment.class, null);
 //        mTabhost.addTab(mTabhost.newTabSpec("home").setIndicator());
 
-
-        initTab();
         initToolbr();
+        initTab();
+
     }
 
     private void initToolbr() {
         mToolbar = (FYToolbar) findViewById(R.id.tooblbar);
-
+        mToolbar.setShowSearchView(true);
     }
 
     private void initTab() {
-        Tab tab_home = new Tab(HomeFragment.class, R.string.home, R.drawable.selector_icon_home);
+        final Tab tab_home = new Tab(HomeFragment.class, R.string.home, R.drawable.selector_icon_home);
         Tab tab_hot = new Tab(HotFragment.class, R.string.hot, R.drawable.selector_icon_hot);
         Tab tab_category = new Tab(CategoryFragment.class, R.string.catagory, R.drawable.selector_icon_category);
         Tab tab_cart = new Tab(CartFragment.class, R.string.cart, R.drawable.selector_icon_cart);
@@ -89,6 +90,59 @@ public class MainActivity extends AppCompatActivity {
         mTabhost.getTabWidget().setShowDividers(LinearLayout.SHOW_DIVIDER_NONE);
         //默认第一个
         mTabhost.setCurrentTab(0);
+
+
+        mTabhost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
+            @Override
+            public void onTabChanged(String tabId) {
+                if (tabId == getString(R.string.home)) {
+                    mToolbar.setShowSearchView(true);
+                    mToolbar.getRightButton().setVisibility(View.GONE);
+
+                } else if (tabId == getString(R.string.hot)) {
+
+                    mToolbar.setShowSearchView(true);
+                    mToolbar.getRightButton().setVisibility(View.GONE);
+
+                } else if (tabId == getString(R.string.catagory)) {
+
+                    mToolbar.setShowSearchView(true);
+                    mToolbar.getRightButton().setVisibility(View.GONE);
+
+                } else if (tabId == getString(R.string.cart)) {
+
+                    mToolbar.setTitle(R.string.cart);
+                    mToolbar.setShowSearchView(false);
+                    mToolbar.getRightButton().setVisibility(View.VISIBLE);
+                    mToolbar.getRightButton().setText("编辑");
+                    mToolbar.getRightButton().setTextColor(getResources().getColor(R.color.white));
+                    refData();
+
+                } else if (tabId == getString(R.string.mine)) {
+
+                    mToolbar.setTitle(getString(R.string.mine));
+                    mToolbar.setShowSearchView(false);
+                    mToolbar.getRightButton().setVisibility(View.GONE);
+                }
+            }
+        });
+
+    }
+
+    /**
+     * 刷新购物车
+     */
+    private void refData() {
+        if (cartFragment == null) {
+            Fragment fragment = getSupportFragmentManager().findFragmentByTag(getString(R.string.cart));
+
+            if (fragment != null) {
+                cartFragment = (CartFragment) fragment;
+                cartFragment.refData();
+            }
+        } else {
+            cartFragment.refData();
+        }
 
 
     }

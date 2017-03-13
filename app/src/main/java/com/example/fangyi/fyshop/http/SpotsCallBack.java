@@ -6,50 +6,49 @@ import dmax.dialog.SpotsDialog;
 import okhttp3.Request;
 import okhttp3.Response;
 
-/**
- * Created by fangy on 2017/3/8.
- */
 
-public abstract class SpotsCallBack<T> extends BaseCallback<T> {
+public abstract class SpotsCallBack<T> extends SimpleCallback<T> {
 
 
-    SpotsDialog dialog;
 
-    public SpotsCallBack(Context context) {
-        dialog = new SpotsDialog(context);
+    private  SpotsDialog mDialog;
+
+    public SpotsCallBack(Context context){
+        super(context);
+
+        initSpotsDialog();
     }
 
-    public void showDialog() {
 
-        dialog.show();
+    private  void initSpotsDialog(){
 
+        mDialog = new SpotsDialog(mContext,"拼命加载中...");
     }
 
-    public void setMessage(String message) {
-        dialog.setMessage(message);
+    public  void showDialog(){
+        mDialog.show();
     }
 
-    private void dismissDialog() {
-        if (dialog != null) {
-            dialog.dismiss();
-        }
+    public  void dismissDialog(){
+        mDialog.dismiss();
+    }
+
+
+    public void setLoadMessage(int resId){
+        mDialog.setMessage(mContext.getString(resId));
     }
 
 
     @Override
     public void onBeforeRequest(Request request) {
+
         showDialog();
     }
-
-    @Override
-    public void onFailure(Request request, Exception e) {
-        dismissDialog();
-    }
-
 
     @Override
     public void onResponse(Response response) {
         dismissDialog();
     }
+
 
 }

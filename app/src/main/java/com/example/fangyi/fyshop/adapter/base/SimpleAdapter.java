@@ -20,4 +20,5 @@ public abstract class SimpleAdapter<T> extends BaseAdapter<T, BaseViewHolder> {
 
 
 
+
 }

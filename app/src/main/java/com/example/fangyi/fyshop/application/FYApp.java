@@ -2,9 +2,13 @@ package com.example.fangyi.fyshop.application;
 
 
 import android.app.Application;
+import android.content.Context;
+import android.content.Intent;
 
 import com.example.fangyi.fyshop.R;
 import com.example.fangyi.fyshop.bean.home.local.HomeCategory;
+import com.example.fangyi.fyshop.bean.login.User;
+import com.example.fangyi.fyshop.utils.UserLocalData;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import com.facebook.imagepipeline.decoder.SimpleProgressiveJpegConfig;
@@ -25,11 +29,25 @@ public class FYApp extends Application {
     public static List<String> titles = new ArrayList<>();
     public static List<HomeCategory> datas = new ArrayList<>(15);
 
+    private User user;
+
+    private static FYApp instance;
+
+
+    public static FYApp getInstance() {
+        return instance;
+    }
+
+
     @Override
     public void onCreate() {
         super.onCreate();
 
+        instance = this;
         app = this;
+
+        initUser();
+
         ImagePipelineConfig config = ImagePipelineConfig.newBuilder(this)
                 .setProgressiveJpegConfig(new SimpleProgressiveJpegConfig())//渐进式JPEG 只支持网络图片
                 .build();
@@ -39,6 +57,55 @@ public class FYApp extends Application {
 //        initLocalData();
 
     }
+    private void initUser(){
+
+        this.user = UserLocalData.getUser(this);
+    }
+
+
+
+    public User getUser() {
+        return user;
+    }
+
+    public void putUser(User user,String token){
+        this.user = user;
+        UserLocalData.putUser(this,user);
+        UserLocalData.putToken(this,token);
+    }
+
+    public void clearUser(){
+        this.user =null;
+        UserLocalData.clearUser(this);
+        UserLocalData.clearToken(this);
+    }
+
+
+    public String getToken(){
+
+        return  UserLocalData.getToken(this);
+    }
+
+
+
+    private Intent intent;
+
+
+    public void putIntent(Intent intent){
+        this.intent = intent;
+    }
+
+    public Intent getIntent() {
+        return this.intent;
+    }
+
+    public void jumpToTargetActivity(Context context){
+        context.startActivity(intent);
+        this.intent =null;
+    }
+
+
+
 
     private void initLocalData() {
         String[] urls = getResources().getStringArray(R.array.url);

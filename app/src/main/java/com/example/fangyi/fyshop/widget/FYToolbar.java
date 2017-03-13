@@ -12,8 +12,8 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.fangyi.fyshop.R;
@@ -28,7 +28,7 @@ public class FYToolbar extends Toolbar {
     private View mView;
     private TextView mTextTitle;
     private EditText mSearchView;
-    private ImageButton mRightImageButton;
+    private Button mRightButton;
 
 
     public FYToolbar(Context context) {
@@ -43,13 +43,11 @@ public class FYToolbar extends Toolbar {
         super(context, attrs, defStyleAttr);
 
         initView();
-        setContentInsetsRelative(10,10);//设置边距
+        setContentInsetsRelative(10, 10);//设置边距
 
         if (attrs != null) {
             final TintTypedArray a = TintTypedArray.obtainStyledAttributes(getContext(), attrs,
                     R.styleable.FYToolbar, defStyleAttr, 0);
-
-
 
 
             final Drawable rightIcon = a.getDrawable(R.styleable.FYToolbar_rightButtnIcon);
@@ -58,8 +56,8 @@ public class FYToolbar extends Toolbar {
             }
 
 
-            boolean isShowSearchView = a.getBoolean(R.styleable.FYToolbar_isShowSearchView,false);
-            if(isShowSearchView){
+            boolean isShowSearchView = a.getBoolean(R.styleable.FYToolbar_isShowSearchView, false);
+            if (isShowSearchView) {
                 showSearchView();
                 hideTitleView();
             }
@@ -85,34 +83,52 @@ public class FYToolbar extends Toolbar {
 
 
     public void setShowSearchView(boolean isShowSearchView) {
-        if(isShowSearchView){
+
+        if (isShowSearchView) {
             showSearchView();
             hideTitleView();
+        } else {
+            showTitleView();
+            hideSearchView();
         }
     }
 
 
-    public void  setRightButtonIcon(Drawable icon){
 
-        if(mRightImageButton !=null){
-            mRightImageButton.setImageDrawable(icon);
-            mRightImageButton.setVisibility(VISIBLE);
+    public void setRightButtonIcon(Drawable icon) {
+
+        if (mRightButton != null) {
+            mRightButton.setBackground(icon);
+            mRightButton.setVisibility(VISIBLE);
         }
 
     }
 
+    public void setRightButtonText(CharSequence text){
+        mRightButton.setText(text);
+        mRightButton.setVisibility(VISIBLE);
+    }
 
-    public  void setChangeHint(String  isChangeHint){
+    public void setRightButtonText(int id){
+        setRightButtonText(getResources().getString(id));
+    }
+
+    public void setChangeHint(String isChangeHint) {
         mSearchView.setHint(isChangeHint);
     }
 
-    public  void setChangeText(String  isChangeText){
+    public void setChangeText(String isChangeText) {
         mSearchView.setText(isChangeText);
     }
 
 
-    public  void setRightButtonOnClickListener(OnClickListener li){
-        mRightImageButton.setOnClickListener(li);
+    public void setRightButtonOnClickListener(OnClickListener li) {
+        mRightButton.setOnClickListener(li);
+    }
+
+    public Button getRightButton(){
+
+        return this.mRightButton;
     }
 
 
@@ -125,12 +141,12 @@ public class FYToolbar extends Toolbar {
 
             mTextTitle = (TextView) mView.findViewById(R.id.toolbar_title);
             mSearchView = (EditText) mView.findViewById(R.id.toolbar_searchview);
-            mRightImageButton = (ImageButton) mView.findViewById(R.id.toolbar_rightButton);
+            mRightButton = (Button) mView.findViewById(R.id.toolbar_rightButton);
 
             //长、宽、对齐方式
             LayoutParams lp = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL);
 
-            addView(mView,lp);
+            addView(mView, lp);
 
         }
 
@@ -153,21 +169,21 @@ public class FYToolbar extends Toolbar {
         }
     }
 
-    public  void showSearchView(){
+    public void showSearchView() {
 
-        if(mSearchView !=null)
+        if (mSearchView != null)
             mSearchView.setVisibility(VISIBLE);
 
     }
 
 
-    public void hideSearchView(){
-        if(mSearchView !=null)
+    public void hideSearchView() {
+        if (mSearchView != null)
             mSearchView.setVisibility(GONE);
     }
 
-    public void showTitleView(){
-        if(mTextTitle !=null)
+    public void showTitleView() {
+        if (mTextTitle != null)
             mTextTitle.setVisibility(VISIBLE);
     }
 

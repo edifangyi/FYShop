@@ -18,11 +18,12 @@ import com.example.fangyi.fyshop.adapter.CategoryWaresListAdapter;
 import com.example.fangyi.fyshop.adapter.base.BaseAdapter;
 import com.example.fangyi.fyshop.application.FYApp;
 import com.example.fangyi.fyshop.bean.category.CategoryList;
-import com.example.fangyi.fyshop.bean.category.WaresList;
 import com.example.fangyi.fyshop.bean.home.BannerOnline;
+import com.example.fangyi.fyshop.bean.hot.Page;
+import com.example.fangyi.fyshop.bean.hot.Wares;
 import com.example.fangyi.fyshop.http.BaseCallback;
 import com.example.fangyi.fyshop.http.Contants;
-import com.example.fangyi.fyshop.http.OKHttpHelper;
+import com.example.fangyi.fyshop.http.OkHttpHelper;
 import com.example.fangyi.fyshop.http.SpotsCallBack;
 import com.example.fangyi.fyshop.loader.GlideImageLoader;
 import com.example.fangyi.fyshop.view.DividerGridItemDecoration;
@@ -45,29 +46,30 @@ public class CategoryFragment extends Fragment {
     private RecyclerView mRecyclerviewWares;
     private MaterialRefreshLayout mRefreshLaout;
 
-    private OKHttpHelper okHttpHelper = OKHttpHelper.getInstance();
+    private OkHttpHelper okHttpHelper = OkHttpHelper.getInstance();
 
     private CategoryListAdapter mCategoryListAdapter;
     private CategoryWaresListAdapter mCategoryWaresListAdapter;
 
-    private List<WaresList.ListBean> mWaresList;
-
+    private List<Wares> mWares;
 
     private List<String> images = FYApp.images;
     private List<String> titles = FYApp.titles;
     private List<String> images2 = new ArrayList<>();
     private List<String> titles2 = new ArrayList<>();
 
-    private int currPage = 1;
+    private int curPage = 1;
     private int totalPage = 1;
     private int pageSize = 10;
     private long category_id = 0;
+    private int totalCount = 10;
 
-    private static final int STATE_NORMAL = 0;//正常状态
-    private static final int STATE_REFREH = 1;//下拉刷新状态
-    private static final int STATE_MORE = 2;//加载更多状态
 
-    private int state = STATE_NORMAL;//当前状态
+    private static final int STATE_NORMAL = 0;
+    private static final int STATE_REFREH = 1;
+    private static final int STATE_MORE = 2;
+
+    private int state = STATE_NORMAL;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -89,7 +91,7 @@ public class CategoryFragment extends Fragment {
 
 
     private void requestCategoryBannerData() {
-        okHttpHelper.get(Contants.API.BANNER_CATEGORY + "?type=1", new SpotsCallBack<List<BannerOnline>>(getContext()) {
+        okHttpHelper.get(Contants.API.BANNER_CATEGORY + "?type=1",new SpotsCallBack<List<BannerOnline>>(getContext()) {
 
 
             @Override
@@ -121,11 +123,11 @@ public class CategoryFragment extends Fragment {
             public void onSuccess(Response response, List<CategoryList> categoryLists) {
 
                 showCategoryList(categoryLists);
+
                 if (categoryLists != null && categoryLists.size() > 0) {
                     category_id = categoryLists.get(0).getId();
-                    requestCategoryWaresData(category_id);
                 }
-
+                requestCategoryWaresData(category_id);
             }
 
             @Override
@@ -137,11 +139,11 @@ public class CategoryFragment extends Fragment {
 
     private void requestCategoryWaresData(long categoryListId) {
 
-        String url = Contants.API.WARES_LIST + "?categoryId=" + categoryListId + "&curPage=" + currPage + "&pageSize=" + pageSize;
+        String url = Contants.API.WARES_LIST + "?categoryId=" + categoryListId + "&curPage=" + curPage + "&pageSize=" + pageSize;
 
         KLog.e("===" + url);
 
-        okHttpHelper.get(url, new BaseCallback<WaresList>() {
+        okHttpHelper.get(url, new BaseCallback<Page<Wares>>() {
 
 
             @Override
@@ -160,16 +162,24 @@ public class CategoryFragment extends Fragment {
             }
 
             @Override
-            public void onSuccess(Response response, WaresList waresList) {
-                currPage = waresList.getCurrentPage();
-                totalPage = waresList.getTotalPage();
+            public void onSuccess(Response response, Page<Wares> waresPage) {
 
-                showWaresListData(waresList.getList());
+                curPage = waresPage.getCurrentPage();
+                totalPage = waresPage.getTotalPage();
+                totalCount = waresPage.getTotalCount();
+                mWares = waresPage.getList();
+                showWaresListData(waresPage.getList());
+
             }
 
 
             @Override
             public void onError(Response response, int code, Exception e) {
+
+            }
+
+            @Override
+            public void onTokenError(Response response, int code) {
 
             }
         });
@@ -183,38 +193,39 @@ public class CategoryFragment extends Fragment {
 
                 CategoryList categoryList = mCategoryListAdapter.getItem(position);
                 category_id = categoryList.getId();
-                currPage = 1;
-                state =STATE_NORMAL;
+                curPage = 1;
+                state = STATE_NORMAL;
                 requestCategoryWaresData(category_id);
             }
         });
         mRecyclerView.setAdapter(mCategoryListAdapter);
     }
 
-    private void showWaresListData(List<WaresList.ListBean> mWaresList) {
+    private void showWaresListData(List<Wares> wares) {
         switch (state) {
 
             case STATE_NORMAL:
+
                 if (mCategoryWaresListAdapter == null) {
-                    mCategoryWaresListAdapter = new CategoryWaresListAdapter(getContext(), mWaresList);
+                    mCategoryWaresListAdapter = new CategoryWaresListAdapter(getContext(), wares);
                     mRecyclerviewWares.setAdapter(mCategoryWaresListAdapter);
                 } else {
-                    mCategoryWaresListAdapter.clearData();
-                    mCategoryWaresListAdapter.addData(mWaresList);
+                    mCategoryWaresListAdapter.clear();
+                    mCategoryWaresListAdapter.addData(wares);
                 }
 
                 break;
 
             case STATE_REFREH:
-                mCategoryWaresListAdapter.clearData();
-                mCategoryWaresListAdapter.addData(mWaresList);
+                mCategoryWaresListAdapter.clear();
+                mCategoryWaresListAdapter.addData(wares);
 
                 mRecyclerviewWares.scrollToPosition(0);
                 mRefreshLaout.finishRefresh();
                 break;
 
             case STATE_MORE:
-                mCategoryWaresListAdapter.addData(mCategoryWaresListAdapter.getDatas().size(), mWaresList);
+                mCategoryWaresListAdapter.addData(mCategoryWaresListAdapter.getDatas().size(), wares);
                 mRecyclerviewWares.scrollToPosition(mCategoryWaresListAdapter.getDatas().size());
                 mRefreshLaout.finishRefreshLoadMore();
                 break;
@@ -257,21 +268,23 @@ public class CategoryFragment extends Fragment {
         mRefreshLaout = (MaterialRefreshLayout) view.findViewById(R.id.refresh_layout);
 
         mRefreshLaout.setLoadMore(true);
-        //下拉刷新监听
         mRefreshLaout.setMaterialRefreshListener(new MaterialRefreshListener() {
-            //在刷新
             @Override
             public void onRefresh(MaterialRefreshLayout materialRefreshLayout) {
+
                 refreshData();
+
             }
 
-            //刷新加载更多
             @Override
             public void onRefreshLoadMore(MaterialRefreshLayout materialRefreshLayout) {
-                if (currPage <= totalPage) {
+
+                KLog.e("====" + curPage + " ========= " + totalPage);
+
+                if (mWares.size() <= totalCount)
                     loadMoreData();
-                } else {
-//                    Toast.makeText(getContext(), "已经没有了", Toast.LENGTH_SHORT).show();
+                else {
+//                    Toast.makeText()
                     mRefreshLaout.finishRefreshLoadMore();
                 }
             }
@@ -279,14 +292,16 @@ public class CategoryFragment extends Fragment {
     }
 
     private void refreshData() {
-        currPage = 1;
+        curPage = 1;
         state = STATE_REFREH;
         requestCategoryWaresData(category_id);
     }
 
     private void loadMoreData() {
-        currPage = ++currPage;
+        curPage = ++curPage;
         state = STATE_MORE;
+
+        KLog.e("====" + category_id + " ========= " + curPage);
         requestCategoryWaresData(category_id);
     }
 

@@ -21,6 +21,11 @@ android {
 
 }
 
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
@@ -30,7 +35,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.1.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.1'
     testCompile 'junit:junit:4.12'
-
     //klog
     compile 'com.github.zhaokaiqiang.klog:library:1.6.0'
     //轮播
@@ -57,10 +61,30 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:24.2.0'
     //cardview
     compile 'com.android.support:cardview-v7:24.2.0'
+    //design
+    compile 'com.android.support:design:25.2.0'
     //okhttp3
     compile 'com.squareup.okhttp3:okhttp:3.6.0'
     //gson
     compile 'com.google.code.gson:gson:2.8.0'
     //dialog
     compile 'com.github.d-max:spots-dialog:0.7@aar'
+    //butterknife
+    compile 'com.jakewharton:butterknife:8.5.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
+    //分享
+    compile project(path: ':sharesdk')
+    //圆形头像
+    compile 'de.hdodenhof:circleimageview:2.1.0'
+    //短信sdk
+    compile files('libs/MobCommons-2016.1201.1839.jar')
+    compile files('libs/MobTools-2016.1201.1839.jar')
+    compile name: 'SMSSDK-2.1.3', ext: 'aar'
+    compile name: 'SMSSDKGUI-2.1.3', ext: 'aar'
+    compile project(':sharesdk')
+    compile project(':lib:bdwallet_pay_sdk')
+    compile project(':lib:pingpp')
+
+    //波轮
+    compile 'com.bigkoo:pickerview:2.0.3'
 }

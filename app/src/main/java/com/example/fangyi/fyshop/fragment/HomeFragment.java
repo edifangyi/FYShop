@@ -1,5 +1,6 @@
 package com.example.fangyi.fyshop.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -12,13 +13,14 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.fangyi.fyshop.R;
+import com.example.fangyi.fyshop.WareListActivity;
 import com.example.fangyi.fyshop.adapter.HomeCatgoryAdapter;
 import com.example.fangyi.fyshop.application.FYApp;
 import com.example.fangyi.fyshop.bean.home.BannerOnline;
 import com.example.fangyi.fyshop.bean.home.Campaign;
 import com.example.fangyi.fyshop.http.BaseCallback;
 import com.example.fangyi.fyshop.http.Contants;
-import com.example.fangyi.fyshop.http.OKHttpHelper;
+import com.example.fangyi.fyshop.http.OkHttpHelper;
 import com.example.fangyi.fyshop.http.SpotsCallBack;
 import com.example.fangyi.fyshop.loader.GlideImageLoader;
 import com.example.fangyi.fyshop.view.DividerItemDecortion;
@@ -47,7 +49,7 @@ import okhttp3.Response;
 public class HomeFragment extends Fragment implements OnBannerListener {
 
 
-    private OKHttpHelper httpHelper = OKHttpHelper.getInstance();
+    private OkHttpHelper httpHelper = OkHttpHelper.getInstance();
     private Banner banner;
     private RecyclerView mRecyclerView;
     private HomeCatgoryAdapter mAdatper;
@@ -201,6 +203,11 @@ public class HomeFragment extends Fragment implements OnBannerListener {
             public void onError(Response response, int code, Exception e) {
 
             }
+
+            @Override
+            public void onTokenError(Response response, int code) {
+
+            }
         });
 
     }
@@ -213,17 +220,41 @@ public class HomeFragment extends Fragment implements OnBannerListener {
         mAdatper.setOnCampaignClickListener(new HomeCatgoryAdapter.OnCampaignClickListener() {
             @Override
             public void onClick(View view, Campaign.CpOneBean campaign) {
-                Toast.makeText(getContext(), "campaign:" + campaign.getTitle(), Toast.LENGTH_SHORT).show();
+
+
+                KLog.e("====111111111111-------" + campaign.getId());
+
+                Intent intent = new Intent(getActivity(), WareListActivity.class);
+
+                Bundle bundle = new Bundle();
+                bundle.putLong(Contants.COMPAINGAIN_ID,campaign.getId());
+                intent.putExtras(bundle);
+
+                startActivity(intent);
             }
 
             @Override
             public void onClick(View view, Campaign.CpTwoBean campaign) {
-                Toast.makeText(getContext(), "campaign:" + campaign.getTitle(), Toast.LENGTH_SHORT).show();
+                KLog.e("====2222222222222---------" + campaign.getId());
+                Intent intent = new Intent(getActivity(), WareListActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putLong(Contants.COMPAINGAIN_ID,campaign.getId());
+                intent.putExtras(bundle);
+
+
+                startActivity(intent);
             }
 
             @Override
             public void onClick(View view, Campaign.CpThreeBean campaign) {
-                Toast.makeText(getContext(), "campaign:" + campaign.getTitle(), Toast.LENGTH_SHORT).show();
+                KLog.e("====333333333333---------" + campaign.getId());
+                Intent intent = new Intent(getActivity(), WareListActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putLong(Contants.COMPAINGAIN_ID,campaign.getId());
+                intent.putExtras(bundle);
+
+
+                startActivity(intent);
             }
         });
 
